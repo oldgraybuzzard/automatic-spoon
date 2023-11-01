@@ -33,18 +33,28 @@ def add_password():
         messagebox.showerror("Error", "Password length be greater than 4 characters.")
         return
     
-    if not password:
-      #If the password field is empty, generate a random password
-      password = generate_password(password_length)
-      password_entry.delete(0, tk.END)
-      password_entry.insert(0, password)
-    
     passwords = load_passwords()
+    
+    #Check if the name is already used (must be unique)
+    if name in passwords:
+        messagebox.showerror("Errir", f"The name '{name}' is already used. Please choose a unique name.")
+      
+    #check if both username and password are repeated
+    for existing_name, data in passwords.items():
+      if data['username'] == username and data['password'] == password:
+        messagebox.showerror("Error", "The same username and password combination already exists.")
+        return
+  
+    #If all checks pass, add the password
     passwords[name] = {'username': username, 'password': password}
     save_passwords(passwords)
     messagebox.showinfo("Success", f"Password for {name} added successfully!")
     name_entry.delete(0, tk.END)
     username_entry.delete(0, tk.END)
+    password_entry.delete(0, tk.END)
+    password_length_entry.delete(0, tk.END)
+    password_length_entry.insert(0, "14")  # Reset to default length
+  
     
 def get_password():
     name = name_entry.get()

@@ -1,4 +1,6 @@
 import json
+import random
+import string
 import tkinter as tk
 from tkinter import messagebox
 
@@ -13,6 +15,10 @@ def save_passwords(passwords):
     with open('passwords.json', 'w') as file:
         json.dump(passwords, file)
 
+def generate_password(length=14):
+  characters = string.ascii_letters + string.digits + string.punctuation
+  return ''.join(random.choice(characters) for _ in range(length))
+
 def add_password():
     name = name_entry.get()
     username = username_entry.get()
@@ -22,14 +28,19 @@ def add_password():
         messagebox.showerror("Error", "Please fill in all fields.")
         return
     
+    if not password:
+      #If the password field is empty, generate a random password
+      password = generate_password()
+      password_entry.delete(0, tk.END)
+      password_entry.insert(0, password)
+    
     passwords = load_passwords()
     passwords[name] = {'username': username, 'password': password}
     save_passwords(passwords)
     messagebox.showinfo("Success", f"Password for {name} added successfully!")
     name_entry.delete(0, tk.END)
     username_entry.delete(0, tk.END)
-    password_entry.delete(0, tk.END)
-
+    
 def get_password():
     name = name_entry.get()
     passwords = load_passwords()
@@ -67,6 +78,9 @@ add_button.pack()
 
 get_button = tk.Button(root, text="Get Password", command=get_password)
 get_button.pack()
+
+generate_button = tk.Button(root, text="Generate Password", command=lambda: password_entry.insert(0, generate_password()))
+generate_button.pack()
 
 # Display result
 result_text = tk.StringVar()

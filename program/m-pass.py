@@ -16,7 +16,7 @@ def save_passwords(passwords):
         json.dump(passwords, file)
 
 def generate_password(length=14):
-  characters = string.ascii_letters + string.digits + string.punctuation
+  characters = string.ascii_letters + string.digits + string.punctuation 
   return ''.join(random.choice(characters) for _ in range(length))
 
 def add_password():
@@ -28,9 +28,14 @@ def add_password():
         messagebox.showerror("Error", "Please fill in all fields.")
         return
     
+    password_length = int(password_length_entry.get())  
+    if password_length < 4:
+        messagebox.showerror("Error", "Password length be greater than 4 characters.")
+        return
+    
     if not password:
       #If the password field is empty, generate a random password
-      password = generate_password()
+      password = generate_password(password_length)
       password_entry.delete(0, tk.END)
       password_entry.insert(0, password)
     
@@ -72,6 +77,12 @@ password_label.pack()
 password_entry = tk.Entry(root, show="*")
 password_entry.pack()
 
+password_length_label = tk.Label(root, text="Password Length:")
+password_length_label.pack()
+password_length_entry = tk.Entry(root)
+password_length_entry.pack()
+password_length_entry.insert(0, "14") #Default length
+
 # Buttons
 add_button = tk.Button(root, text="Add Password", command=add_password)
 add_button.pack()
@@ -79,7 +90,7 @@ add_button.pack()
 get_button = tk.Button(root, text="Get Password", command=get_password)
 get_button.pack()
 
-generate_button = tk.Button(root, text="Generate Password", command=lambda: password_entry.insert(0, generate_password()))
+generate_button = tk.Button(root, text="Generate Password", command=lambda: password_entry.insert(0, generate_password(int(password_length_entry.get()))))
 generate_button.pack()
 
 # Display result
